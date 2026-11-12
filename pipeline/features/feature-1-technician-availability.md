@@ -15,9 +15,9 @@
 - `GET /api/technicians/{id}/jobs` — a technician's booked jobs
 - `POST /api/jobs` — book a new job for a technician
 
-## Known issue
+## Resolved issue
 
-The Definition of Done above says overlapping bookings must be rejected. As shipped, **this feature does not fully do that** — see `TechnicianAvailabilityService.bookJob(...)` in the backend. This is intentional: it is the subject of the first exercise anyone doing agent-native work on this repo will run. See `pipeline/decisions/feature-1-decisions.md` for the decision this bug relates to (the travel-buffer policy), which the fix should not break.
+The shipped implementation compared exact start times and missed overlapping intervals. Session A2 corrected the check to compare each job's reserved interval, including the 45-minute travel buffer, and added regression tests. The standing requirement is documented in `pipeline/rules/no-overlap-booking.md`.
 
 ## Artifacts this feature touches
 
@@ -25,4 +25,5 @@ The Definition of Done above says overlapping bookings must be rejected. As ship
 - `backend/.../controller/TechnicianController.java`, `JobController.java`
 - `backend/.../model/Technician.java`, `Job.java`, `JobStatus.java`
 - `backend/.../data/MockDataStore.java`
-- No `pipeline/rules/*.md` yet — none has been needed until now
+- `backend/.../service/TechnicianAvailabilityServiceTest.java`
+- `pipeline/rules/no-overlap-booking.md`

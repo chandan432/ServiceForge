@@ -10,14 +10,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * Note for anyone extending this suite: this class covers the happy path and the one conflict
- * case Feature 1 actually catches (an exact start-time match). It does NOT test a genuine
- * interval overlap with a different start time — see
- * pipeline/features/feature-1-technician-availability.md, "Known issue," and
- * TechnicianAvailabilityService.bookJob(...) for why. Adding that test is part of the exercise,
- * not an oversight to quietly fix here.
- */
+/** Unit tests for technician booking and availability conflicts. */
 class TechnicianAvailabilityServiceTest {
 
     private MockDataStore dataStore;
@@ -32,7 +25,7 @@ class TechnicianAvailabilityServiceTest {
 
     @Test
     void booksAJobForAnAvailableTechnician() {
-        LocalDateTime start = LocalDateTime.now().withHour(16).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime start = LocalDateTime.now().withHour(16).withMinute(30).withSecond(0).withNano(0);
         LocalDateTime end = start.plusHours(1);
 
         Job job = service.bookJob(1L, "New Customer", start, end);
@@ -48,6 +41,32 @@ class TechnicianAvailabilityServiceTest {
         // Technician 1 already has a seeded job starting at 09:00 (see MockDataStore.seed()).
 
         assertThrows(IllegalStateException.class, () -> service.bookJob(1L, "Conflicting Customer", start, end));
+    }
+
+    @Test
+    void rejectsBookingWhenJobIntervalsOverlapEvenIfStartTimesDiffer() {
+        LocalDateTime start = LocalDateTime.now().withHour(10).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusHours(2);
+
+        assertThrows(IllegalStateException.class, () -> service.bookJob(1L, "Overlapping Customer", start, end));
+    }
+
+    @Test
+    void rejectsBookingWithinTravelBufferAfterExistingJob() {
+        LocalDateTime start = LocalDateTime.now().withHour(11).withMinute(30).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusHours(1);
+
+        assertThrows(IllegalStateException.class, () -> service.bookJob(1L, "Travel Buffer Customer", start, end));
+    }
+
+    @Test
+    void allowsBookingWhenExistingJobsTravelBufferHasExpired() {
+        LocalDateTime start = LocalDateTime.now().withHour(11).withMinute(45).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusHours(1);
+
+        Job job = service.bookJob(1L, "Available Customer", start, end);
+
+        assertEquals("Available Customer", job.getCustomerName());
     }
 
     @Test
