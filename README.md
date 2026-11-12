@@ -31,5 +31,6 @@ Start at **[`AGENTS.md`](AGENTS.md)**. It's the entry point for Claude Code, Git
 ## What's deliberately here
 
 - A real, working technician-booking flow (list technicians → view their jobs → book a new one).
-- A real bug in that flow (see `pipeline/features/feature-1-technician-availability.md` and `pipeline/decisions/feature-1-decisions.md` — no spoilers here).
-- Pre-baked agent, skill, and pipeline artifacts, ready to extend — nothing about the *next* feature exists yet. That starts with you.
+- The Session A2 overlap-booking fix and its 45-minute travel-buffer rule (see `pipeline/rules/no-overlap-booking.md`).
+- A draft Feature 2 parts-reservation requirements spec at `pipeline/features/feature-2-parts-reservation.md`; it still requires human review before design or implementation.
+- Pre-baked agent, skill, and pipeline artifacts that can be extended for subsequent features.

@@ -24,7 +24,7 @@ That one line is the only input. Everything else below is how it gets turned int
 
 - **Role definition:** `.claude/agents/developer-agent.md`
 - **Skills it loads:** `.claude/skills/build-code-skill/SKILL.md` (stack conventions) and, if the change touches the data model, `.claude/skills/migration-safety-skill/SKILL.md`.
-- **Rules it must follow:** everything under `pipeline/rules/*.md` that exists at the time (there are none yet — the first one gets written the first time a shipped bug needs a standing rule against recurring).
+- **Rules it must follow:** every rule under `pipeline/rules/*.md` that exists at the time, including the standing technician-booking overlap rule.
 - **What it does:** implements the spec from step 1, in the backend and/or frontend as the spec requires, without expanding scope beyond what the spec says.
 - **Output:** working code, committed.
 
