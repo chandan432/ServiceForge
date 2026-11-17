@@ -60,6 +60,14 @@ class TechnicianAvailabilityServiceTest {
     }
 
     @Test
+    void rejectsBookingThatEndsInsideTravelBufferBeforeExistingJob() {
+        LocalDateTime start = LocalDateTime.now().withHour(12).withMinute(30).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusHours(1);
+
+        assertThrows(IllegalStateException.class, () -> service.bookJob(1L, "Before Existing Job Customer", start, end));
+    }
+
+    @Test
     void allowsBookingWhenExistingJobsTravelBufferHasExpired() {
         LocalDateTime start = LocalDateTime.now().withHour(11).withMinute(45).withSecond(0).withNano(0);
         LocalDateTime end = start.plusHours(1);
